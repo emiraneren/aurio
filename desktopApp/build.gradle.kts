@@ -129,8 +129,8 @@ tasks.named<hydraulic.conveyor.gradle.WriteConveyorConfigTask>("writeConveyorCon
         destination.get().asFile.appendText(
             """
             |app.fsname = simpmusic
-            |app.display-name = SimpMusic
-            |app.rdns-name = com.maxrave.simpmusic
+            |app.display-name = Aurio
+            |app.rdns-name = com.emiraneren.aurio
             |
             |// Override the Gradle-detected classpath with the ProGuard'd
             |// jar directory. Conveyor expands a directory entry to every
@@ -167,7 +167,7 @@ compose.desktop {
             }
             targetFormats(*listTarget.toTypedArray())
             modules("jdk.unsupported")
-            packageName = "SimpMusic"
+            packageName = "Aurio"
             macOS {
                 val formatedDate =
                     Instant.now().let {
@@ -409,8 +409,8 @@ tasks.register("packageConveyorAppImage") {
             """[Desktop Entry]
             |Type=Application
             |Version=1.0
-            |Name=SimpMusic
-            |Comment=SimpMusic v$versionName - FOSS YouTube Music Client
+            |Name=Aurio
+            |Comment=Aurio v$versionName - FOSS YouTube Music client (fork of SimpMusic)
             |Exec=bin/simpmusic %u
             |Icon=simpmusic
             |Terminal=false

@@ -1,3 +1,7 @@
+> **Aurio** is a personal fork of [SimpMusic](https://github.com/maxrave-dev/SimpMusic) by maxrave-dev, under the same GPL-3.0 license.
+> It is not affiliated with or endorsed by the SimpMusic project. Fork-specific notes (in Turkish) are in [PLAN.md](PLAN.md).
+> Download links and contact details below belong to the original SimpMusic project.
+
 <div align="center"> <img src="https://raw.githubusercontent.com/maxrave-dev/SimpMusic/dev/fastlane/metadata/android/en-US/images/featureGraphic.png"> <h1>SimpMusic</h1>  
 A FOSS YouTube Music client for Android and Desktop with many features from<br>Spotify, SponsorBlock, ReturnYouTubeDislike using Compose Multiplatform to develop.
 <br> 

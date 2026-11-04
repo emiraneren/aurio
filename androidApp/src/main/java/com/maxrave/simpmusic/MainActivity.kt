@@ -254,7 +254,8 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.getLocation()
 
-        if (!BuildConfig.DEBUG) viewModel.checkOfficialBuild(packageName, signingCertSha256())
+        // Aurio fork: upstream's official-build check only knows SimpMusic's own package names and
+        // signing keys, so it would lock this fork out. Skipped on purpose.
         setContent {
             App(viewModel)
         }

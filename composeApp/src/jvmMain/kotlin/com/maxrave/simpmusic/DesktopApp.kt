@@ -193,7 +193,7 @@ fun runDesktopApp(args: Array<String> = emptyArray()) {
     startKoin {
         loadAllModules(
             AppIdentity(
-                applicationId = "com.maxrave.simpmusic",
+                applicationId = "com.emiraneren.aurio",
                 versionName = BuildKonfig.versionName,
                 platform = "${System.getProperty("os.name")} ${System.getProperty("os.version")}",
                 // Set by desktopApp's JavaExec tasks (run, hotRunJvm); a packaged install never has it.
