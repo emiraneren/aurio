@@ -3,78 +3,95 @@
 Aurio, [SimpMusic](https://github.com/maxrave-dev/SimpMusic)'in (GPL-3.0) Kotlin fork'udur.
 Eski Musike tabanlı sürüm `musike-legacy` dalında duruyor.
 
-Bu dosya Aurio'ya özeldir. Repodaki diğer `.md` dosyaları (README, CLAUDE.md, CONTRIBUTING…)
-SimpMusic'ten gelir ve onlara ait kuralları anlatır.
+Bu dosya Aurio'ya özeldir. Repodaki diğer `.md` dosyaları SimpMusic'ten gelir.
+
+## 0. Kurallar
+
+- **SimpMusic'ten otomatik güncelleme alınmaz.** Proje sahibi "güncelleme var mı?" diye sorunca
+  `git fetch upstream` ile yeni değişikliklere bakılır, ne geldiği anlatılır; birleştirme ancak onay sonrası.
+- **Diller:** yalnızca İngilizce ve Türkçe.
+- **Platform önceliği:** iPhone ve web en önemli. Sonra macOS ve Windows. Android ikinci planda.
 
 ## 1. Fork'ta şimdiye kadar değişenler
 
 | Ne | Nerede |
 |---|---|
-| Uygulama adı "Aurio" (30 dilde arayüz metinleri) | `composeResources/values*/strings.xml`, `app_name.xml` |
-| Android uygulama kimliği `com.emiraneren.aurio` (SimpMusic'in yanına ayrı uygulama olarak kurulur) | `androidApp/build.gradle.kts`, manifest, `shortcuts.xml` |
+| Uygulama adı "Aurio" | `composeResources/values*/strings.xml`, `app_name.xml` |
+| Android uygulama kimliği `com.emiraneren.aurio` | `androidApp/build.gradle.kts`, manifest, `shortcuts.xml` |
 | Masaüstü görünen ad, rdns adı, yayıncı | `desktopApp/build.gradle.kts`, `conveyor.conf` |
-| "Resmî olmayan kopya" kilit ekranı kapatıldı (SimpMusic yalnızca kendi paket adını ve imzasını tanıyor) | `MainActivity.kt` |
-| GitHub Actions sadece elle çalışır, push'ta derleme yok; SimpMusic'in PR botu silindi | `.github/workflows/` |
+| "Resmî olmayan kopya" kilit ekranı kapatıldı | `MainActivity.kt` |
+| GitHub Actions sadece elle çalışır; SimpMusic'in PR botu silindi | `.github/workflows/` |
+| Diller İngilizce + Türkçe'ye indirildi (diğer 27 dil silindi, dil seçicide sadece ikisi var) | `composeResources/`, `SettingScreen.kt`, `locale_config.xml` |
 
-Bilerek değiştirilmeyenler:
-- Kotlin paket adları (`com.maxrave.simpmusic…`): değiştirmek SimpMusic'ten güncelleme almayı imkânsızlaştırır.
-- SimpMusic'in kendi servislerinin adları: "SimpMusic Lyrics", "SimpMusic Charts", simpmusic.org.
-- `core` alt modülü hâlâ `maxrave-dev/core`'u gösteriyor. Orada değişiklik gerekirse önce o repo fork'lanmalı.
+Bilerek değiştirilmeyenler: Kotlin paket adları (`com.maxrave…`), SimpMusic'in servis adları
+(SimpMusic Lyrics, Charts), `core` alt modülü (hâlâ `maxrave-dev/core`).
 
-## 2. Musike'nin kullandığı API'ler: SimpMusic'te karşılığı var mı?
+## 2. Platform durumu
 
-| Musike'de | SimpMusic'te | Sonuç |
+| Platform | Durum |
+|---|---|
+| macOS bilgisayar | **Var.** SimpMusic'in masaüstü sürümü macOS'ta çalışıyor (macOS 15 ve üstü). |
+| Windows | **Var.** |
+| Android | **Var.** |
+| iPhone | **Yok.** Aşağıda madde P1. |
+| Web tarayıcı | **Yok.** Aşağıda madde P2. |
+
+### Neden iPhone ve web zor? (kodda ölçüldü)
+
+**iPhone:** Arayüz ve iş mantığı büyük ölçüde ortak kodda (Compose Multiplatform), bu iyi haber.
+`core` modüllerinin çoğunda iOS hedefi zaten tanımlı. Eksik olan üç büyük parça var:
+1. **Ses/video çalar yok.** Android Media3, masaüstü mpv kullanıyor; ikisi de iOS'ta çalışmaz.
+   Masaüstü çalar yaklaşık 6.800 satır. iOS için AVPlayer üzerine yeni bir çalar yazılmalı
+   (arka planda çalma, kilit ekranı kontrolleri, sıra, geçiş).
+2. **YouTube akış çözücü yok.** Akış adresini bulan PipePipe kütüphanesi Java'dır, iOS'ta çalışmaz.
+   iOS için ayrı bir çözücü gerekir (Musike'nin iOS uygulamasındaki Swift çözücü burada örnek olur).
+3. **Platforma özel kod.** `composeApp` içinde 47, `core` içinde 20 `expect` tanımı var; her birine
+   iOS karşılığı yazılmalı (dosya seçme, paylaşma, bildirim, ayarlar…).
+4. **Araç:** Bu Mac'te Xcode kurulu değil (sadece komut satırı araçları var). iPhone'a kurmak için
+   Xcode ve en azından ücretsiz Apple ID gerekir; App Store'a koymak için yıllık 99$ geliştirici hesabı
+   (kaynak: Apple Developer Program fiyatı, bilgim dahilinde; doğrulanmalı).
+
+**Web:** Tarayıcı, güvenlik kuralı (CORS) yüzünden YouTube Music'in API'sine doğrudan istek atamaz.
+Bu yüzden web sürümü tek başına çalışamaz, **arada bir sunucu şart**. Musike'nin Node sunucusu ve
+Docker'ı bu işi yapıyordu. Ayrıca Aurio'nun veritabanı (Room) ve çalarları tarayıcıda çalışmıyor.
+
+## 3. Eklenebilecek özellikler (karar proje sahibinin)
+
+Zorluk ve süre benim tahminim, ölçülmüş değil.
+
+### Platformlar
+
+| # | İş | Zorluk | Not |
+|---|---|---|---|
+| P1 | **iPhone uygulaması** | Çok büyük | Önce Xcode kurulumu. Sıra: iOS hedefini açıp derlemek → AVPlayer çalar → akış çözücü → eksik `expect`'ler. |
+| P2a | **Web: Aurio sunucusu + Musike'nin web arayüzü** | Büyük | Aurio'nun Kotlin çekirdeğini bir sunucu (Ktor) olarak çalıştırıp, Musike'nin hazır React arayüzünü ona bağlamak. Docker ile kendi sunucunda çalışır. En hızlı web yolu. |
+| P2b | **Web: Compose ile aynı arayüz tarayıcıda (wasm) + sunucu** | Çok büyük | Arayüz Aurio ile birebir aynı olur ama veritabanı ve çalar tarayıcı için yeniden yazılmalı; sunucu yine gerekir. |
+| P3 | iPad ve Mac için iOS uygulaması (iPhone uygulamasıyla aynı kod) | Küçük, P1'den sonra | |
+
+### Musike'den gelecek özellikler
+
+| # | Özellik | Zorluk |
 |---|---|---|
-| youtubei.js (Innertube): arama, sanatçı, albüm, türler | `kotlinYtmusicScraper` (kendi Innertube istemcisi) | Var, ekleme gerekmez |
-| yt-dlp + Deno: akış adresi ve imza çözme | PipePipe/NewPipe + QuickJS ile cihazda çözme, yedek olarak api.pipepipe.dev ve BravePipe | Var, daha gelişmiş |
-| `streaming.json`: uzaktan istemci ayarları | `player_configs.json` kayıt dosyası (simpmusic-files ve Metrolist faraday) | Var |
-| FFmpeg: HD video ile sesi birleştirme | Android'de Media3 MergingMediaSource, masaüstünde mpv EDL | Var |
-| YouTube Music türler/ruh hâli | Var (Moods & Genres) | Var |
-| Sanatçının resmî klibini bulma | `counterpart` ile şarkı/video geçişi | Kısmen (sadece giriş yapılmışken) |
-| iOS yerel çözücü (iOS istemcisiyle akış alma) | Yok, SimpMusic'in iOS uygulaması yok | Eksik, ancak iOS hedefi açılırsa anlamlı |
-| yt-dlp sürüm kontrolü (GitHub API) | Gerek yok, yt-dlp kullanılmıyor | Gereksiz |
+| M1 | Liste ile arama (virgülle birçok şarkı, en iyi eşleşme, hepsini listeye ekle) | Kolay–orta |
+| M2 | Masaüstü klavye kısayolları (boşluk, oklar, F, `?` yardım ekranı) | Kolay |
+| M3 | Sinema modu (videoyu büyütme, kontrollerin solması) | Kolay; mevcut tam ekranla karşılaştırılmalı |
+| M4 | Android TV (SimpMusic'in `feat/android-tv` dalı incelenerek) | Orta |
 
-Sonuç: Musike'nin kullandığı API'lerden SimpMusic'e eklenmesi gereken bir şey yok. Hepsinin
-karşılığı var ya da daha gelişmiş bir karşılığı var. Tek istisna iOS, o da aşağıda ayrı madde.
+### Aurio'ya özel iyileştirmeler
 
-## 3. Musike'de olup SimpMusic'te olmayan özellikler
+| # | İş | Zorluk | Not |
+|---|---|---|---|
+| A1 | **Türkçe çevirinin tamamlanması** | Kolay | İngilizce 1045 metin var, Türkçe 619. Eksik 426 metin şu an İngilizce görünüyor. |
+| A2 | Uygulama içi güncelleme kontrolünü SimpMusic yerine Aurio'nun sürümlerine yönlendirmek ya da kapatmak | Kolay | Şu an büyük olasılıkla SimpMusic'in sürümlerini öneriyor (doğrulanmadı). |
+| A3 | `vivoAndroidApp` modülünü kaldırmak | Kolay | Uygulamayı Spotify'ın kimliğiyle (`com.spotify.music`) derliyor; Aurio'da olmamalı. |
+| A4 | Aurio logosu ve simgesi | Kolay–orta | Şu an SimpMusic'in simgeleri duruyor. |
+| A5 | `core` alt modülünü kendi hesabına fork'lamak | Kolay | iOS çalışması `core` içinde değişiklik gerektirecek; şu an orası SimpMusic'in reposu. |
 
-Kodda arayarak bulundu (`grep`). Zorluk benim tahminim.
+## 4. Açık riskler
 
-| # | Özellik | SimpMusic'teki durum | Zorluk | Not |
-|---|---|---|---|---|
-| 1 | **Liste ile arama** (virgülle birçok şarkı, en iyi eşleşme, toplu çalma listesine ekleme) | Yok | Kolay–orta | Arama ekranına yeni bir mod. Mevcut arama API'si yeterli. |
-| 2 | **Masaüstü klavye kısayolları** (boşluk = çal/duraklat, oklar, F = sinema modu, `?` yardım) | Sadece mini oynatıcıda tuş dinleme var | Kolay | `jvmMain` içinde pencere seviyesinde `onPreviewKeyEvent`. |
-| 3 | **Android TV** (TV başlatıcısında görünme, kumanda ile gezinme, büyük arayüz) | Ana dalda yok; SimpMusic'te `feat/android-tv` adlı geliştirme dalı var | Orta | Önce o dalın durumuna bakmak, belki onu birleştirmek mantıklı. |
-| 4 | **Sinema modu** (videoyu büyütme, kontrollerin solması) | Tam ekran video var | Kolay | Muhtemelen mevcut tam ekranla büyük ölçüde örtüşüyor. Önce denenmeli. |
-| 5 | **Tarayıcıda çalışma (PWA) / Docker ile kendi sunucunda çalıştırma** | Yok | Çok zor | Compose'un web hedefi (wasmJs) var ama Media3, mpv ve Room orada çalışmaz. Pratikte ayrı bir proje. |
-| 6 | **iPhone uygulaması** | Kodda iOS hedefi var ama kapalı; oynatıcı ve arayüz iOS'a yazılmamış | Çok zor | Ses çalma (AVPlayer) ve iOS'a özel her şey sıfırdan yazılmalı. Ayrıca Apple geliştirici hesabı ve Mac ile Xcode gerekir. |
-
-Musike'de olup SimpMusic'te zaten bulunanlar (eklemeye gerek yok): yedekleme/geri yükleme,
-tema ve vurgu rengi, türler, sanatçı ve albüm sayfaları, otomatik radyo, YouTube linkiyle açma,
-medya tuşları, Türkçe (SimpMusic'te 619 Türkçe metin var).
-
-## 4. Önerilen sıra
-
-1. Derleme ortamını kur (JDK 21 + Android Studio), Aurio'yu telefonda ve masaüstünde bir kez çalıştır.
-2. Liste ile arama (madde 1).
-3. Masaüstü klavye kısayolları (madde 2).
-4. Android TV: önce SimpMusic'in `feat/android-tv` dalını incele (madde 3).
-5. iOS ve web/Docker: ancak gerçekten istenirse; ayrı ve büyük işler.
-
-Sırayı ve neyin ekleneceğini proje sahibi belirler.
-
-## 5. Açık riskler ve yapılacak kontroller
-
-- **Güncelleme kontrolü:** Uygulama içindeki "güncellemeleri kontrol et" büyük olasılıkla
-  SimpMusic'in sürümlerine bakıyor (`checkForUpdate`, `core` içinde). Kullanıcıyı SimpMusic'i
-  indirmeye yönlendirebilir. Doğrulanmadı; kapatılmalı ya da Aurio'nun sürümlerine yönlendirilmeli.
-- **`vivoAndroidApp` modülü** uygulamayı `com.spotify.music` kimliğiyle derliyor (vivo telefonlardaki
-  bir özellik için Spotify'ın kimliğini kullanıyor). Aurio bu modülü derlememeli ve dağıtmamalı.
-  Kaldırılması düşünülebilir.
-- **Lisans:** GPL-3.0. Aurio'nun kaynak kodu açık kalmalı, SimpMusic kaynak olarak belirtilmeli.
-- **SimpMusic'e katkı:** SimpMusic, yapay zekâ ile yazılmış ya da `Co-Authored-By: Claude` satırı
-  taşıyan PR'ları otomatik kapatıyor. Aurio'daki bir değişikliği SimpMusic'e göndermek için kodun
-  insan tarafından satır satır gözden geçirilmesi ve bu satırların temizlenmesi gerekir.
-- **Ana projeden güncelleme alma:** `git fetch upstream && git merge upstream/main`. Çakışma en çok
-  `strings.xml` dosyalarında (Aurio adı) çıkar.
+- **Lisans:** GPL-3.0. Kaynak kod açık kalmalı, SimpMusic kaynak olarak belirtilmeli.
+- **SimpMusic'e katkı:** SimpMusic, yapay zekâ ile yazılmış ya da `Co-Authored-By: Claude` satırı taşıyan
+  PR'ları otomatik kapatıyor.
+- **YouTube kullanım koşulları:** Uygulama YouTube içeriğini reklamsız çekiyor; kişisel kullanım içindir.
+- **Dil silme ve güncellemeler:** Silinen 27 dil dosyası, SimpMusic'ten güncelleme alınırken
+  "silindi / değişti" çakışması çıkarabilir; o dosyalar yine silinerek çözülür.

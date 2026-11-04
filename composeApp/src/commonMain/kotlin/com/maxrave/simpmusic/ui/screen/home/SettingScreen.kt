@@ -974,9 +974,12 @@ fun SettingScreen(
                                 selectOne =
                                     SettingAlertState.SelectData(
                                         listSelect =
-                                            SUPPORTED_LANGUAGE.items.map {
-                                                (it.toString() == SUPPORTED_LANGUAGE.getLanguageFromCode(language ?: "en-US")) to it.toString()
-                                            },
+                                            // Aurio ships English and Turkish only.
+                                            SUPPORTED_LANGUAGE.items
+                                                .filter { it.toString() == "English" || it.toString() == "Türkçe" }
+                                                .map {
+                                                    (it.toString() == SUPPORTED_LANGUAGE.getLanguageFromCode(language ?: "en-US")) to it.toString()
+                                                },
                                     ),
                                 confirm =
                                     runBlocking { getString(Res.string.change) } to { state ->
