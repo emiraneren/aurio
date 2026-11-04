@@ -7,7 +7,7 @@ import { api, saveFile, type ImportResult } from "./api";
 import type { Library } from "./types";
 
 /**
- * Portable backup of a Aurio instance: the library plus a few preferences.
+ * Portable backup of an Aurio instance: the library plus a few preferences.
  * Version 1 is read by every Aurio from this release on; bump `version` only for breaking changes.
  */
 export interface Backup {

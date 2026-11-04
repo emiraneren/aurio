@@ -387,7 +387,7 @@ export const en = {
     exporting: "Exporting",
     import: "Import",
     importing: "Importing",
-    pickFile: "Choose a Aurio backup file",
+    pickFile: "Choose an Aurio backup file",
     created: (playlists: number, favorites: number) =>
       `Backup created: ${count(playlists, "playlist", "playlists")} and ${count(favorites, "favorite", "favorites")}`,
     exportedAt: (date: string, time: string) => `Exported on ${date} at ${time}`,
@@ -411,7 +411,7 @@ export const en = {
     addedTracks: (n: number) => count(n, "track added", "tracks added"),
     addedFavorites: (n: number) => count(n, "favorite", "favorites"),
     unreadable: "Couldn't read the file. It needs to be a .aurio.json backup.",
-    notBackup: "This file isn't a Aurio backup.",
+    notBackup: "This file isn't an Aurio backup.",
     newer: "This backup was made by a newer Aurio. Update the app to import it.",
   },
 

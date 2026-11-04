@@ -149,6 +149,16 @@
           retry: "Tentar de novo",
           names: { "yt-dlp": "yt-dlp (busca no YouTube)", deno: "Deno (desafios do YouTube)", ffmpeg: "FFmpeg (vídeo HD)" },
         },
+        tr: {
+          starting: "Başlatılıyor",
+          downloading: "İlk açılışta bileşenler indiriliyor",
+          ready: "hazır",
+          extracting: "açılıyor",
+          of: (got, total) => `${got} / ${total} MB`,
+          failed: "Başlatılamadı: ",
+          retry: "Tekrar dene",
+          names: { "yt-dlp": "yt-dlp (YouTube araması)", deno: "Deno (YouTube doğrulamaları)", ffmpeg: "FFmpeg (HD video)" },
+        },
       };
       const lang = new URLSearchParams(location.search).get("lang");
       const t = TEXTS[lang] ?? TEXTS.en;

@@ -75,7 +75,7 @@ Aurio started from the idea behind the old Discord music bots: a server that fet
 - **Backup to a file** to move everything to another Aurio: merge or replace, with a preview before importing
 
 **Make it yours**
-- **English** and **Brazilian Portuguese**, switchable in Settings (per device). Server messages and the genre names and bios that come from YouTube Music follow the same language
+- **English**, **Brazilian Portuguese** and **Turkish**, switchable in Settings (per device). Server messages and the genre names and bios that come from YouTube Music follow the same language
 - Dark and light themes, and **any accent color**: 8 presets or a custom one. Aurio adjusts text shades so they stay readable in both themes
 - Show or hide panels: the Now Playing panel, playlists in the sidebar, a compact icons-only sidebar, the album column, the background texture, and each section of the Home page
 - Responsive from 320 px phones to ultrawide monitors; lock screen, headphone and media key controls (Media Session); picks up the queue where you left off

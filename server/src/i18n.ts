@@ -3,7 +3,7 @@
  * They are kept as keys and translated when sent, so each device gets its own language.
  */
 
-export type Lang = "en" | "pt-BR";
+export type Lang = "en" | "pt-BR" | "tr";
 type Params = Record<string, string | number>;
 
 const en = {
@@ -11,7 +11,7 @@ const en = {
   emptyQuery: "Type something to search.",
   searchFailed: "Search is unavailable right now ({detail}). Try again in a moment.",
   missingTitle: "Give the song's title.",
-  notBackup: "This file isn't a Aurio backup.",
+  notBackup: "This file isn't an Aurio backup.",
   newerBackup: "This backup was made by a newer Aurio. Update the app to import it.",
   idMismatch: "The ID doesn't match.",
   tracksRequired: "Send a list of tracks.",
@@ -106,7 +106,56 @@ const pt: Record<MsgKey, string> = {
   ffmpegPackage: "Pacote do FFmpeg inesperado.",
 };
 
-const CATALOG: Record<Lang, Record<MsgKey, string>> = { en, "pt-BR": pt };
+const trTR: Record<MsgKey, string> = {
+  invalidVideoId: "Geçersiz video kimliği.",
+  emptyQuery: "Aramak için bir şey yaz.",
+  searchFailed: "Arama şu an kullanılamıyor ({detail}). Birazdan tekrar dene.",
+  missingTitle: "Şarkının adını yaz.",
+  notBackup: "Bu dosya bir Aurio yedeği değil.",
+  newerBackup: "Bu yedek Aurio'nun daha yeni bir sürümüyle yapılmış. İçe aktarmak için uygulamayı güncelle.",
+  idMismatch: "Kimlik eşleşmiyor.",
+  tracksRequired: "Bir parça listesi gönder.",
+  invalidGenre: "Geçersiz tür.",
+  invalidOffset: "Geçersiz konum.",
+  invalidArtist: "Geçersiz sanatçı.",
+  routeNotFound: "Yol bulunamadı.",
+  noFreePort: "{from} ile {to} arasında boş port yok.",
+  invalidTrack: "Geçersiz parça.",
+  playlistNotFound: "Çalma listesi bulunamadı.",
+  playlistNameRequired: "Çalma listesine bir ad ver.",
+  genresUnavailable: "Türler şu an yüklenemedi. Tekrar dene.",
+  genreUnavailable: "Bu tür şu an açılamadı. Tekrar dene.",
+  genreEmpty: "Bu tür için hiçbir şey bulunamadı.",
+  artistUnavailable: "Bu sanatçı şu an açılamadı. Tekrar dene.",
+  artistNotFound: "Sanatçı bulunamadı.",
+  albumUnavailable: "Bu albüm şu an açılamadı. Tekrar dene.",
+  albumNotFound: "Albüm bulunamadı.",
+  invalidAlbum: "Geçersiz albüm.",
+  ytdlpMissing: "Bu bilgisayarda yt-dlp bulunamadı. Yüklemek için Aurio'da Ayarlar'ı aç.",
+  ytdlpTimeout: "yt-dlp çok geç yanıt verdi.",
+  ytdlpCantRun: "yt-dlp çalıştırılamadı ({error}). Aurio'da Ayarlar'ı aç.",
+  botCheck: "YouTube bu bağlantının bot olmadığını kanıtlamasını istiyor. VPN kullanıyorsan kapatıp tekrar dene.",
+  videoUnavailable: "Bu video YouTube'da kullanılamıyor.",
+  ageRestricted: "Yaş kısıtlamalı video. Oturum açılmış bir hesabın çerezleri gerekiyor.",
+  ytdlpFailed: "yt-dlp başarısız oldu.",
+  ytdlpOutdated: "{detail} YouTube değişmiş olabilir: yt-dlp'yi Ayarlar'dan güncelle.",
+  noAudio: "Bu video için kullanılabilir ses biçimi yok.",
+  noSdVideo: "Bu videonun birleşik SD sürümü yok. HD kullan.",
+  streamRefused: "YouTube akışı reddetti (HTTP {status}). yt-dlp'yi Ayarlar'dan güncellemeyi dene.",
+  noWinget: "yt-dlp bulunamadı ve winget kullanılamıyor. Elle yükle: https://github.com/yt-dlp/yt-dlp",
+  installingYtdlp: "yt-dlp yükleniyor",
+  updatingYtdlp: "yt-dlp güncelleniyor",
+  directUpdateFailed: "Doğrudan güncelleme başarısız, winget deneniyor",
+  downloadingTools: "yt-dlp ve Deno GitHub'dan indiriliyor",
+  alreadyLatest: "Zaten en yeni sürüm ({version})",
+  ytdlpReady: "yt-dlp {version} kullanıma hazır",
+  updateFailed: "yt-dlp güncellenemedi.",
+  toolMissing: "Bu bilgisayarda {tool} bulunamadı.",
+  downloadFailed: "{tool} indirilemedi (HTTP {status}).",
+  ffmpegPackage: "Beklenmeyen FFmpeg paketi.",
+};
+
+const CATALOG: Record<Lang, Record<MsgKey, string>> = { en, "pt-BR": pt, tr: trTR };
 
 /** A message translated when it is sent: a key plus the values for its {placeholders}. */
 export interface Msg {
@@ -124,7 +173,7 @@ export function tr(lang: Lang, text: Text): string {
   return CATALOG[lang][text.key].replace(/\{(\w+)\}/g, (all, name: string) => String(text.params?.[name] ?? all));
 }
 
-export const isLang = (v: unknown): v is Lang => v === "en" || v === "pt-BR";
+export const isLang = (v: unknown): v is Lang => v === "en" || v === "pt-BR" || v === "tr";
 
 /** The language a request asked for. The app always says; anything else (media elements, curl) gets English. */
 export function langOf(req: { headers: Record<string, string | string[] | undefined> }): Lang {
@@ -133,4 +182,4 @@ export function langOf(req: { headers: Record<string, string | string[] | undefi
 }
 
 /** The code YouTube Music uses for its own words (genre names, artist bios). */
-export const youtubeLang = (lang: Lang) => (lang === "pt-BR" ? "pt" : "en");
+export const youtubeLang = (lang: Lang) => (lang === "pt-BR" ? "pt" : lang === "tr" ? "tr" : "en");
